@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+workspace/
+uv.lock
+dist/
+.venv-sandbox/
+tests/_mplcache/
+reports/

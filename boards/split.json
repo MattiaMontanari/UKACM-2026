@@ -1,0 +1,36 @@
+{
+  "holdout": [
+    "holdout-holes-04",
+    "holdout-holes-05",
+    "holdout-rects-06",
+    "holdout-rects-07",
+    "holdout-slots-05",
+    "holdout-slots-06",
+    "holdout-slots-07",
+    "holdout-dense-05",
+    "holdout-dense-06",
+    "holdout-dense-07"
+  ],
+  "train": [
+    "train-holes-00",
+    "train-holes-01",
+    "train-holes-02",
+    "train-holes-03",
+    "train-rects-00",
+    "train-rects-01",
+    "train-rects-02",
+    "train-rects-03",
+    "train-rects-04",
+    "train-rects-05",
+    "train-slots-00",
+    "train-slots-01",
+    "train-slots-02",
+    "train-slots-03",
+    "train-slots-04",
+    "train-dense-00",
+    "train-dense-01",
+    "train-dense-02",
+    "train-dense-03",
+    "train-dense-04"
+  ]
+}
