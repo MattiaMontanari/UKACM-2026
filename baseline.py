@@ -1,4 +1,4 @@
-"""Part 1: a minimal Deep Agent that produces one Level-0 Gmsh mesh."""
+""" a minimal Deep Agent that produces one Level-0 Gmsh mesh."""
 
 from __future__ import annotations
 
@@ -39,9 +39,9 @@ from quadagent import quality
 REPO_ROOT = Path(__file__).resolve().parent
 BOARDS_DIR = REPO_ROOT / "boards"
 WORKSPACE_ROOT = REPO_ROOT / "workspace"
-TARGET_EDGE_MM = 2.0
-MAX_MODEL_CALLS = 12
-MAX_EXECUTE_CALLS = 4
+TARGET_EDGE_MM = 1.5
+MAX_MODEL_CALLS = 15
+MAX_EXECUTE_CALLS = 8
 DEFAULT_MODEL = "glm-5.3"
 DEFAULT_BASE_URL = "https://api.z.ai/api/coding/paas/v4"
 
@@ -64,7 +64,7 @@ REQUIRED_ARTIFACTS = (
 )
 
 SYSTEM_PROMPT = f"""\
-You are QuadAgent Part 1, a deliberately simple meshing agent for a lecture.
+You are QuadAgent a deliberately simple meshing agent for a lecture.
 Create one valid, first-order, quad-dominant 2D Gmsh mesh from /board.json.
 
 Workflow:
@@ -190,7 +190,7 @@ def build_agent(
     model_name: str,
     base_url: str,
 ) -> Any:
-    """Build the single-agent Part 1 graph bound to one workspace."""
+    """Build the single-agent graph bound to one workspace."""
     workspace = workspace.resolve()
     backend = LocalShellBackend(
         root_dir=workspace,
