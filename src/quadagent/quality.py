@@ -8,6 +8,7 @@ edge lengths, and the critical time-step proxy dt ~ h_min / c.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 from pathlib import Path
@@ -34,8 +35,11 @@ def _load_elements(
     """Return global {etype: rows}, node count, coords, and per-surface blocks."""
     import gmsh
 
-    gmsh.initialize()
+    # Deep Agents invokes tools in a worker thread. Disabling Gmsh's SIGINT
+    # handler keeps initialization valid outside Python's main thread.
+    gmsh.initialize(interruptible=False)
     try:
+        gmsh.option.setNumber("General.Terminal", 0)
         gmsh.open(str(path))
         node_tags, coords, _ = gmsh.model.mesh.getNodes()
         coords = np.asarray(coords, dtype=float).reshape(-1, 3)[:, :2]
@@ -308,3 +312,17 @@ def summarize(report: dict[str, Any]) -> str:
 def summarize_json(report: dict[str, Any]) -> str:
     """Compact JSON rendering for the transcript."""
     return json.dumps(report, sort_keys=True)
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run the trusted scorer in a dedicated process and emit JSON."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("mesh_file", type=Path)
+    parser.add_argument("--expected-area", type=float, required=True)
+    args = parser.parse_args(argv)
+    print(summarize_json(analyze(args.mesh_file, expected_area_mm2=args.expected_area)))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

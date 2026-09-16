@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import json
+import shutil
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import gmsh
 import pytest
 
+import baseline
 from quadagent import quality
 
 
@@ -70,6 +74,43 @@ def test_summary_contains_gates(two_square_mesh: Path) -> None:
     assert "[PASS] quad_fraction = 1.0" in text
     assert "[PASS] scaled_jacobian_min" in text
     assert "[PASS] element_count" in text
+
+
+def test_scorer_runs_in_agent_worker_thread(two_square_mesh: Path) -> None:
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        report = pool.submit(quality.analyze, two_square_mesh).result()
+
+    assert report["n_quads"] == 2
+
+
+def test_agent_quality_tool_isolates_gmsh_in_a_process(
+    two_square_mesh: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    workspace = two_square_mesh.parent
+    shutil.copyfile(two_square_mesh, workspace / "mesh.msh")
+    (workspace / "board.json").write_text(
+        json.dumps(
+            {
+                "board_id": "two-squares",
+                "outline": {"width": 2.0, "height": 1.0, "chamfers": []},
+                "holes": [],
+                "cutouts": [],
+                "slots": [],
+                "header": None,
+            }
+        )
+    )
+
+    def fail_in_parent(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("quality.analyze must not run in the agent worker process")
+
+    monkeypatch.setattr(quality, "analyze", fail_in_parent)
+    tool = baseline._quality_tool(workspace)
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        result = pool.submit(tool.invoke, {"mesh_file": "/mesh.msh"}).result()
+
+    assert "n_quads: 2" in result
+    assert json.loads((workspace / "quality.json").read_text())["n_quads"] == 2
 
 
 def test_missing_file_raises() -> None:

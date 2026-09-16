@@ -1,23 +1,20 @@
 [project]
 name = "quadagent"
 version = "0.1.0"
-description = "Minimal deep agent for 2D quad meshing of PCB-like boards with Gmsh (explicit FEA) - academic lecture baseline"
+description = "Part 1 lecture baseline: a Deep Agent for 2D quad-dominant Gmsh meshing"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12,<3.13"
 dependencies = [
-    "openai>=1.60",
-    "gmsh>=4.13",
-    "numpy>=1.26",
-    "matplotlib>=3.8",
+    "deepagents==0.7.14",
+    "gmsh>=4.15,<5",
+    "langchain-openai==1.6.2",
+    "matplotlib>=3.10,<4",
+    "numpy>=2.2,<3",
+    "python-dotenv>=1.1,<2",
 ]
-
-[project.scripts]
-quadagent = "quadagent.cli:main"
 
 [dependency-groups]
-dev = [
-    "pytest>=8.0",
-]
+dev = ["pytest>=9,<10", "ruff>=0.15,<0.16"]
 
 [build-system]
 requires = ["hatchling"]
@@ -28,3 +25,12 @@ packages = ["src/quadagent"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["lecture/part2-assets"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
