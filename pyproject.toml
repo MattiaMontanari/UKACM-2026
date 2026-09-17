@@ -1,7 +1,7 @@
 [project]
 name = "quadagent"
 version = "0.1.0"
-description = "Part 1 lecture baseline: a Deep Agent for 2D quad-dominant Gmsh meshing"
+description = "A minimal Deep Agent that generates Gmsh meshes"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -30,7 +30,6 @@ pythonpath = ["."]
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-extend-exclude = ["lecture/part2-assets"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
